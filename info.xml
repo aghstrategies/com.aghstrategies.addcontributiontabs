@@ -2,7 +2,7 @@
 <extension key="com.aghstrategies.addcontributiontabs" type="module">
   <file>addcontributiontabs</file>
   <name>Add Contribution Tabs</name>
-  <description>Adds contribution tabs for households and employees to individuals' and employers' records</description>
+  <description>Adds contributions households and employees to individuals' and employers' contribution tabs</description>
   <license>agpl</license>
   <maintainer>
     <author>Maggie Epps</author>
