@@ -6,9 +6,9 @@ require_once 'addcontributiontabs.civix.php';
  * Implementation of hook_civicrm_alterContent
  */
 function addcontributiontabs_civicrm_alterContent(  &$content, $context, $tplName, &$object){
-  if ($context=='page'){
-    if ($tplName=='CRM/Contribute/Page/Tab.tpl'){
-     if ($object->_action==16){
+  if ( $context=='page' ) {
+    if ( $tplName=='CRM/Contribute/Page/Tab.tpl' ) {
+      if ( $object->_action == 16 ) {
         $marker1 = strpos($content, 'thead');
         $marker2 = strpos($content, '/form', $marker1);
         $marker = strpos($content, '</div', $marker2);
@@ -38,30 +38,40 @@ function addcontributiontabs_civicrm_alterContent(  &$content, $context, $tplNam
                 <th scope="col">'.ts('Premium').'</th><th scope="col"></th>
               </tr>
             </thead>';
-          $contact_id = $object->getVar('_contactId');
-          print_r($contact_id);
-          $related_contact_ids = array();
-          $relationships = civicrm_api('Relationship', 'get', array('version' => 3, 'sequential' => 1, 'contact_id_a' => $contact_id, 'debug' => 1));
-          if ($relationships['count'] > 0){
-            foreach ($relationships['values'] as $relationship){
-               if (in_array($relationship['relationship_type_id'], array(5, 7, 8))){
-                $relationship_type = civicrm_api('RelationshipType', 'getSingle', array('version' => 3, 'id' => $relationship['relationship_type_id']));
-                $related_contact_ids[] = array('contact_id' => $relationship['contact_id_b'], 'relationship_name' => $relationship_type['name_b_a']);
-              }
+        $contact_id = $object->getVar( '_contactId' );
+        $related_contact_ids = array();
+        $params = array(
+          'version' => 3,
+          'sequential' => 1,
+          'contact_id_a' => $contact_id,
+        );
+        $relationships = civicrm_api( 'Relationship', 'get', $params );
+        if ( $relationships['count'] > 0 ) {
+          foreach ( $relationships['values'] as $relationship ) {
+            if ( in_array($relationship['relationship_type_id'], array(5, 7, 8)) ) {
+              $relationship_type = civicrm_api('RelationshipType', 'getSingle', array('version' => 3, 'id' => $relationship['relationship_type_id']));
+              $related_contact_ids[] = array(
+                'contact_id' => $relationship['contact_id_b'],
+                'relationship_name' => $relationship_type['name_b_a'],
+              );
             }
-         }
-          $relationships = civicrm_api('Relationship', 'get', array('version' => 3, 'sequential' => 1, 'contact_id_b' => $contact_id, 'debug' => 1));
-          if ($relationships['count'] > 0){
-            foreach ($relationships['values'] as $relationship){
-               if (in_array($relationship['relationship_type_id'], array(5, 7, 8))){
-                $relationship_type = civicrm_api('RelationshipType', 'getSingle', array('version' => 3, 'id' => $relationship['relationship_type_id']));
-                $related_contact_ids[] = array('contact_id' => $relationship['contact_id_a'], 'relationship_name' => $relationship_type['name_a_b']);
-              }
+          }
+        }
+        $relationships = civicrm_api('Relationship', 'get', array('version' => 3, 'sequential' => 1, 'contact_id_b' => $contact_id, 'debug' => 1));
+        if ( $relationships['count'] > 0 ) {
+          foreach ( $relationships['values'] as $relationship ) {
+            if ( in_array($relationship['relationship_type_id'], array(5, 7, 8)) ) {
+              $relationship_type = civicrm_api('RelationshipType', 'getSingle', array('version' => 3, 'id' => $relationship['relationship_type_id']));
+              $related_contact_ids[] = array(
+                'contact_id' => $relationship['contact_id_a'],
+                'relationship_name' => $relationship_type['name_a_b'],
+              );
             }
-         }
-        foreach ($related_contact_ids as $related_contact){
-          $contributions = civicrm_api('Contribution', 'get', array('version' => 3, 'sequential' => 1, 'contact_id' => $related_contact['contact_id'], 'debug' => 1));
-          foreach ($contributions['values'] as $contribution){
+          }
+        }
+        foreach ( $related_contact_ids as $related_contact ) {
+          $contributions = civicrm_api('Contribution', 'get', array('version' => 3, 'sequential' => 1, 'contact_id' => $related_contact['contact_id']));
+          foreach ( $contributions['values'] as $contribution ) {
             $links = array(
               CRM_Core_Action::VIEW => array(
                 'name' => ts('View'),
@@ -81,22 +91,21 @@ function addcontributiontabs_civicrm_alterContent(  &$content, $context, $tplNam
                 'qs' => 'reset=1&action=delete&id=%%id%%&cid=%%cid%%&honorId=%%honorId%%&context=%%cxt%%',
                 'title' => ts('Delete Contribution'),
               ),
-          );
-          $civilinks = CRM_Core_Action::formLink($links, NULL, array('cid' => $contribution['contact_id'], 'id' => $contribution['id']));
-          $content2 .= '
-              <tr id="rowid40" class="odd-row crm-contribution_40">
-                <td class="right crm-contribution-amount"><span class="nowrap">'.'<a href='.CRM_Utils_System::crmURL(array('p' => 'civicrm/contact/view/', 'q' => 'reset=1&cid='.$contribution['contact_id'])).'>'.$contribution['display_name'].'</span> </td>
-                <td class="right crm-contribution-amount"><span class="nowrap">'.$related_contact['relationship_name'].'</span> </td>
-                <td class="right bold crm-contribution-amount"><span class="nowrap">'.$contribution['total_amount'].'</span> </td>
-                <td class="crm-contribution-type crm-contribution-type_ crm-financial-type crm-financial-type_">'.$contribution['financial_type'].'</td>
-                <td class="crm-contribution-source">'.$contribution['contribution_source'].'</td>
-                <td class="crm-contribution-receive_date">'.$contribution['receive_date'].'</td>
-                <td class="crm-contribution-thankyou_date">'.$contribution['thankyou_date'].'</td>
-                <td class="crm-contribution-status">'.$contribution['contribution_status'].'<br /></td>
-                <td class="crm-contribution-product_name">'.$contribution['product_name'].'</td>
-                <td><span>'.$civilinks.'</span></td>
+            );
+            $civilinks = CRM_Core_Action::formLink($links, NULL, array('cid' => $contribution['contact_id'], 'id' => $contribution['id']));
+            $content2 .= '
+              <tr id="rowid' . $contribution['id'] . '" class="odd-row crm-contribution_' . $contribution['id'] . '">
+                <td class="right crm-contribution-amount"><span class="nowrap">' . CRM_Utils_System::href($contribution['display_name'], 'civicrm/contact/view/', 'reset=1&cid=' . $contribution['contact_id'])), false) . '</span> </td>
+                <td class="right crm-contribution-amount"><span class="nowrap">' . $related_contact['relationship_name'] . '</span> </td>
+                <td class="right bold crm-contribution-amount"><span class="nowrap">' . $contribution['total_amount'] . '</span> </td>
+                <td class="crm-contribution-type crm-contribution-type_ crm-financial-type crm-financial-type_">' . $contribution['financial_type'] . '</td>
+                <td class="crm-contribution-source">' . $contribution['contribution_source'] . '</td>
+                <td class="crm-contribution-receive_date">' . $contribution['receive_date'] . '</td>
+                <td class="crm-contribution-thankyou_date">' . $contribution['thankyou_date'] . '</td>
+                <td class="crm-contribution-status">' . $contribution['contribution_status'] . '</td>
+                <td class="crm-contribution-product_name">' . $contribution['product_name'] . '</td>
+                <td><span>' . $civilinks . '</span></td>
               </tr>';
-
           }
         }
 
