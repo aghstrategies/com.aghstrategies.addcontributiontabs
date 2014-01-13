@@ -6,6 +6,7 @@ require_once 'addcontributiontabs.civix.php';
  * Implementation of hook_civicrm_alterContent
  */
 function addcontributiontabs_civicrm_alterContent(  &$content, $context, $tplName, &$object){
+  print_r($page);
   if ($context=='page'){
     if ($tplName=='CRM/Contribute/Page/Tab.tpl'){
      if ($object->_action==16){
@@ -39,7 +40,6 @@ function addcontributiontabs_civicrm_alterContent(  &$content, $context, $tplNam
               </tr>
             </thead>';
           $contact_id = $object->getVar('_contactId');
-          print_r($contact_id);
           $related_contact_ids = array();
           $relationships = civicrm_api('Relationship', 'get', array('version' => 3, 'sequential' => 1, 'contact_id_a' => $contact_id, 'debug' => 1));
           if ($relationships['count'] > 0){
