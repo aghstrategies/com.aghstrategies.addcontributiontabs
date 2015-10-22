@@ -3,6 +3,9 @@
 /**
  * @file
  * Add a table of contributions from related contacts.
+ *
+ * Copyright (C) 2013-15, AGH Strategies, LLC <info@aghstrategies.com>
+ * Licensed under the GNU Affero Public License 3.0 (see LICENSE.txt)
  */
 
 require_once 'addcontributiontabs.civix.php';
