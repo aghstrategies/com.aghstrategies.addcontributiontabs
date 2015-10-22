@@ -15,8 +15,7 @@ function addcontributiontabs_civicrm_alterContent(&$content, $context, $tplName,
     if ($tplName == 'CRM/Contribute/Page/Tab.tpl') {
       if ($object->_action == 16) {
         $marker1 = strpos($content, 'thead');
-        $marker2 = strpos($content, '/form', $marker1);
-        $marker = strpos($content, '</div', $marker2);
+        $marker = strpos($content, '</form', $marker1);
 
         $content1 = substr($content, 0, $marker);
         $content3 = substr($content, $marker);
@@ -71,7 +70,7 @@ function addcontributiontabs_civicrm_alterContent(&$content, $context, $tplName,
         $params = array(
           'sequential' => 1,
           'contact_id_a' => $contact_id,
-          'id' => array('IN' => array_keys($relTypes)),
+          'relationship_type_id' => array('IN' => array_keys($relTypes)),
           'options' => array('limit' => 0),
         );
         addcontributiontabs_find_relationships($params, $related_contact_ids, $relTypes);
