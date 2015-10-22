@@ -20,15 +20,9 @@ function addcontributiontabs_civicrm_alterContent(&$content, $context, $tplName,
         $content1 = substr($content, 0, $marker);
         $content3 = substr($content, $marker);
         $content2 = '
-          <table class="form-layout-compressed">
-              <tr>
-                  <th class="contriTotalLeft">' . ts('Related Contributions') . '</th>
-                  <th class="right" width="10px"> &nbsp; </th>
-            <th class="right contriTotalRight"></th>
-              </tr>
-          </table>
+          <h3>' . ts('Related Contributions') . '</h3>
 
-          <table class="selector">
+          <table class="selector row-highlight">
             <thead class="sticky">
               <tr>
                 <th scope="col">' . ts('Related Contact') . '</th>
@@ -103,12 +97,14 @@ function addcontributiontabs_civicrm_alterContent(&$content, $context, $tplName,
         );
 
         $rows = array();
+        $toggle = 'even';
         foreach ($related_contact_ids as $related_contact) {
           try {
             $contributions = civicrm_api3('Contribution', 'get', array('contact_id' => $related_contact['contact_id']));
             foreach ($contributions['values'] as $contribution) {
               $civilinks = CRM_Core_Action::formLink($links, NULL, array('cid' => $contribution['contact_id'], 'id' => $contribution['id']));
-              $rows[] = '<tr id="rowid' . $contribution['id'] . '" class="odd-row crm-contribution_' . $contribution['id'] . '">
+              $toggle = ($toggle == 'odd') ? 'even' : 'odd';
+              $rows[] = '<tr id="rowid' . $contribution['id'] . '" class="' . $toggle . '-row crm-contribution_' . $contribution['id'] . '">
                   <td class="right crm-contribution-amount"><span class="nowrap">' . CRM_Utils_System::href($contribution['display_name'], 'civicrm/contact/view/', 'reset=1&cid=' . $contribution['contact_id'], FALSE) . '</span> </td>
                   <td class="right crm-contribution-amount"><span class="nowrap">' . $related_contact['relationship_name'] . '</span> </td>
                   <td class="right bold crm-contribution-amount"><span class="nowrap">' . $contribution['total_amount'] . '</span> </td>
