@@ -52,6 +52,7 @@ function addcontributiontabs_civicrm_alterContent(&$content, $context, $tplName,
               'Employee of',
               'Head of Household for',
               'Household Member of',
+              'Spouse of',
             );
             if (!in_array($relType['name_a_b'], $typesToShow)) {
               unset($relTypeResult['values'][$relTypeID]);
@@ -103,7 +104,13 @@ function addcontributiontabs_civicrm_alterContent(&$content, $context, $tplName,
         $toggle = 'even';
         foreach ($related_contact_ids as $related_contact) {
           try {
-            $contributions = civicrm_api3('Contribution', 'get', array('contact_id' => $related_contact['contact_id']));
+            $contributions = civicrm_api3('Contribution', 'get', array(
+              'contact_id' => $related_contact['contact_id'],
+              'options' => array(
+                'limit' => 0,
+                'sort' => 'receive_date DESC',
+              ),
+            ));
             foreach ($contributions['values'] as $contribution) {
               $civilinks = CRM_Core_Action::formLink($links, NULL, array('cid' => $contribution['contact_id'], 'id' => $contribution['id']));
               $toggle = ($toggle == 'odd') ? 'even' : 'odd';
