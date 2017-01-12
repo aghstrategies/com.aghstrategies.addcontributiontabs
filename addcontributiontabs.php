@@ -102,12 +102,12 @@ function addcontributiontabs_civicrm_alterContent(&$content, $context, $tplName,
         $rows = array();
         $toggle = 'even';
         foreach ($related_contact_ids as $related_contact) {
-        $params = array(
+          $contribParams = array(
             'contact_id' => $related_contact['contact_id'],
             'options' => array('sort' => "receive_date DESC", 'limit' => 0),
-          );          
-try {
-            $contributions = civicrm_api3('Contribution', 'get', $params);
+          );
+          try {
+            $contributions = civicrm_api3('Contribution', 'get', $contribParams);
             foreach ($contributions['values'] as $contribution) {
               $civilinks = CRM_Core_Action::formLink($links, NULL, array('cid' => $contribution['contact_id'], 'id' => $contribution['id']));
               $toggle = ($toggle == 'odd') ? 'even' : 'odd';
