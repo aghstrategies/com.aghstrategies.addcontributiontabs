@@ -172,15 +172,6 @@ function addcontributiontabs_civicrm_config(&$config) {
 }
 
 /**
- * Implementation of hook_civicrm_xmlMenu
- *
- * @param $files array(string)
- */
-function addcontributiontabs_civicrm_xmlMenu(&$files) {
-  _addcontributiontabs_civix_civicrm_xmlMenu($files);
-}
-
-/**
  * Implementation of hook_civicrm_install
  */
 function addcontributiontabs_civicrm_install() {
@@ -221,12 +212,20 @@ function addcontributiontabs_civicrm_upgrade($op, CRM_Queue_Queue $queue = NULL)
   return _addcontributiontabs_civix_civicrm_upgrade($op, $queue);
 }
 
-/**
- * Implementation of hook_civicrm_managed
- *
- * Generate a list of entities to create/deactivate/delete when this module
- * is installed, disabled, uninstalled.
- */
-function addcontributiontabs_civicrm_managed(&$entities) {
-  return _addcontributiontabs_civix_civicrm_managed($entities);
-}
+// /**
+//  * Implements hook_civicrm_postInstall().
+//  *
+//  * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_postInstall
+//  */
+// function addcontributiontabs_civicrm_postInstall() {
+//   _addcontributiontabs_civix_civicrm_postInstall();
+// }
+
+// /**
+//  * Implements hook_civicrm_entityTypes().
+//  *
+//  * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_entityTypes
+//  */
+// function addcontributiontabs_civicrm_entityTypes(&$entityTypes) {
+//   _addcontributiontabs_civix_civicrm_entityTypes($entityTypes);
+// }
