@@ -16,7 +16,7 @@ require_once 'addcontributiontabs.civix.php';
 function addcontributiontabs_civicrm_alterContent(&$content, $context, $tplName, &$object) {
   if ($context == 'page') {
     if ($tplName == 'CRM/Contribute/Page/Tab.tpl') {
-      if ($object->_action == 16) {
+      if ($object->getVar('_action') == 16) {
         $marker1 = strpos($content, 'thead');
         $marker = strpos($content, '</form', $marker1);
 
